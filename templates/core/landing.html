@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% block title %}Edwared Cloud | Portal de Sistemas{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto text-center mt-10">
+    <h1 class="text-5xl md:text-6xl font-extrabold mb-6 tracking-tight">
+        Bienvenido a tu <br>
+        <span class="gradient-text">Ecosistema Digital</span>
+    </h1>
+    <p class="text-xl text-slate-400 mb-12 max-w-2xl mx-auto">
+        Selecciona tu plataforma empresarial o sistema especializado para acceder a tu panel de control y operaciones.
+    </p>
+
+    <!-- Grid de Plataformas -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        
+        <!-- Tarjeta Estática 1: Panadería -->
+        <a href="/panaderia/" class="glass-panel p-8 rounded-2xl group hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl hover:shadow-cyan-500/20 text-left block">
+            <div class="bg-cyan-500/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <svg class="w-8 h-8 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15.546c-.523 0-1.046.151-1.5.454a2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.704 2.704 0 00-3 0 2.704 2.704 0 01-3 0 2.701 2.701 0 00-1.5-.454M9 6v2m3-2v2m3-2v2M9 3h.01M12 3h.01M15 3h.01M21 21v-7a2 2 0 00-2-2H5a2 2 0 00-2 2v7h18zm-3-9v-2a2 2 0 00-2-2H8a2 2 0 00-2 2v2h12z"></path></svg>
+            </div>
+            <h3 class="text-2xl font-semibold mb-2 text-white">Recompensas Panadería</h3>
+            <p class="text-slate-400 mb-4">Sistema de fidelización de clientes para panaderías.</p>
+            <span class="text-cyan-400 font-medium group-hover:text-cyan-300 flex items-center">
+                Acceder al Sistema
+                <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </span>
+        </a>
+
+        <!-- Tarjeta Estática 2: Flores -->
+        <a href="/flores/" class="glass-panel p-8 rounded-2xl group hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl hover:shadow-fuchsia-500/20 text-left block">
+            <div class="bg-fuchsia-500/10 w-16 h-16 rounded-xl flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                <svg class="w-8 h-8 text-fuchsia-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+            </div>
+            <h3 class="text-2xl font-semibold mb-2 text-white">Preventa de Flores</h3>
+            <p class="text-slate-400 mb-4">Gestión de inventario y preventa para floristerías.</p>
+            <span class="text-fuchsia-400 font-medium group-hover:text-fuchsia-300 flex items-center">
+                Acceder al Sistema
+                <svg class="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+            </span>
+        </a>
+
+    </div>
+</div>
+{% endblock %}

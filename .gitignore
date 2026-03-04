@@ -1,0 +1,11 @@
+venv/
+*.sqlite3
+.env
+prod.env
+__pycache__/
+project.zip
+*.pyc
+.vscode/
+.idea/
+*.log
+static/

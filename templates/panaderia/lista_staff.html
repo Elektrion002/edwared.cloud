@@ -1,0 +1,227 @@
+{% extends 'base.html' %}
+
+{% block title %}Panadería | Gestión de Equipo{% endblock %}
+
+{% block content %}
+<!-- Contenedor general expandido -->
+<div class="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-6">
+    
+    <!-- Cabecera Humanizada y Expandida -->
+    <div class="glass-panel p-6 sm:p-8 rounded-2xl mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between border-l-4 border-indigo-500 shadow-xl gap-4">
+        <div>
+            <h1 class="text-3xl sm:text-4xl font-black text-white mb-2 tracking-tight">
+                Equipo de <span class="text-indigo-400">Trabajo</span>
+            </h1>
+            <p class="text-slate-400 text-sm sm:text-base">Hola <strong class="text-white">{{ staff_activo.nombres }}</strong>. Administra permisos, pines y da de alta a tu personal de caja.</p>
+        </div>
+        <a href="{% url 'panaderia:admin_home' %}" class="w-full sm:w-auto text-slate-300 hover:text-white hover:bg-slate-700 transition flex justify-center items-center bg-slate-800 px-6 py-3 rounded-xl font-semibold shadow-lg">
+            <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Volver al Panel
+        </a>
+    </div>
+
+    {% if messages %}
+    <div class="mb-8 space-y-3">
+        {% for message in messages %}
+            <div class="p-4 rounded-xl shadow-lg {% if message.tags == 'success' %}bg-green-500/20 text-green-300 border border-green-500/50{% else %}bg-red-500/20 text-red-300 border border-red-500/50{% endif %} flex items-center">
+                <svg class="w-5 h-5 mr-3 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"></path></svg>
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+        
+        <!-- Formulario Alta / Edición (Full Width en móviles, Sidebar ancho en Desktop) -->
+        <div class="xl:col-span-4 glass-panel p-6 sm:p-8 rounded-3xl border border-slate-700 shadow-2xl relative overflow-hidden">
+            <!-- Efecto bg -->
+            <div class="absolute -right-20 -top-20 w-64 h-64 bg-indigo-600 rounded-full blur-3xl opacity-10 pointer-events-none"></div>
+
+            <h3 class="text-2xl font-bold text-white mb-2 relative z-10" id="formTitle">Nuevo Integrante</h3>
+            <p class="text-sm text-slate-400 mb-8 relative z-10" id="formDesc">Registra a un nuevo miembro del equipo.</p>
+            
+            <form id="staffForm" method="POST" action="{% url 'panaderia:registrar_staff' %}" class="space-y-5 relative z-10">
+                {% csrf_token %}
+                <input type="hidden" name="action_type" id="actionType" value="create">
+                <input type="hidden" name="staff_id" id="editStaffId" value="">
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Usuario (ID para login)</label>
+                    <input type="text" id="inpUsername" name="username" placeholder="ej. cajeroJuan" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition shadow-inner">
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Nombres</label>
+                        <input type="text" id="inpNombres" name="nombres" placeholder="Ej. Juan" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition shadow-inner">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Apellidos</label>
+                        <input type="text" id="inpApellidos" name="apellidos" placeholder="Ej. Pérez" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition shadow-inner">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2" id="lblPassword">Contraseña Completa</label>
+                        <input type="password" id="inpPassword" name="password" placeholder="Mínimo 8 carac." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 transition shadow-inner" required>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">PIN Rápido</label>
+                        <input type="text" id="inpPin" name="pin" placeholder="1234" required maxlength="4" pattern="\d{4}" title="Exactamente 4 dígitos" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white text-center focus:outline-none focus:border-indigo-500 tracking-[0.5em] font-mono font-bold shadow-inner">
+                    </div>
+                </div>
+
+                <div class="pt-4 flex gap-3">
+                    <button type="button" id="btnCancelEdit" class="hidden flex-1 bg-slate-700 hover:bg-slate-600 text-white font-bold py-3.5 rounded-xl transition shadow-lg" onclick="resetForm()">Cancelar</button>
+                    <button type="submit" id="btnSubmit" class="flex-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-3.5 rounded-xl transition shadow-xl shadow-indigo-600/30">Registrar Integrante</button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Tabla de Staff Responsiva y Holgada -->
+        <div class="xl:col-span-8 glass-panel rounded-3xl border border-slate-700 shadow-2xl overflow-hidden">
+            <div class="p-6 sm:p-8 border-b border-slate-700/50 flex justify-between items-center">
+                <h3 class="text-2xl font-bold text-white">Directorio Activo</h3>
+                <span class="bg-indigo-500/20 text-indigo-300 text-xs font-bold px-3 py-1 rounded-full border border-indigo-500/30">{{ lista_staff|length }} Miembros</span>
+            </div>
+            
+            <div class="overflow-x-auto w-full">
+                <table class="w-full text-left text-sm text-slate-300 whitespace-nowrap">
+                    <thead class="bg-slate-900/40 text-xs uppercase text-slate-500 font-bold tracking-wider">
+                        <tr>
+                            <th scope="col" class="px-6 sm:px-8 py-5 text-center">⚙️</th>
+                            <th scope="col" class="px-6 sm:px-8 py-5">Perfil</th>
+                            <th scope="col" class="px-6 sm:px-8 py-5">Usuario(ID) / Rol</th>
+                            <th scope="col" class="px-6 sm:px-8 py-5 text-right">Antigüedad</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/50">
+                        {% for colaborador in lista_staff %}
+                        <tr class="hover:bg-slate-800/30 transition duration-150">
+                            
+                            <!-- Columna 1: Acciones con Iconos Rapidos -->
+                            <td class="px-6 sm:px-8 py-5 text-center flex items-center justify-center gap-3">
+                                <button type="button" 
+                                    onclick="editStaff('{{ colaborador.id }}', '{{ colaborador.username }}', '{{ colaborador.nombres }}', '{{ colaborador.apellidos }}')"
+                                    class="text-indigo-400 hover:text-indigo-300 transition" title="Editar este empleado">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                </button>
+                                
+                                {% if colaborador.id != staff_activo.id %}
+                                <form method="POST" action="{% url 'panaderia:eliminar_staff' colaborador.id %}" class="inline m-0 p-0">
+                                    {% csrf_token %}
+                                    <button type="submit" onclick="return confirm('¿Baja definitiva de {{ colaborador.nombres }}?');" class="text-red-500 hover:text-red-400 transition" title="Dar de baja">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                    </button>
+                                </form>
+                                {% else %}
+                                <span class="text-slate-600 w-5 h-5 block" title="Tú mismo (No puedes borrarte)"></span>
+                                {% endif %}
+                            </td>
+
+                            <td class="px-6 sm:px-8 py-5">
+                                <div class="flex items-center">
+                                    <div class="w-12 h-12 rounded-full flex items-center justify-center font-bold text-lg mr-4 border-2 shadow-inner {% if colaborador.rol == 'ADMIN' %}bg-purple-900/50 text-purple-300 border-purple-500/50{% else %}bg-indigo-900/50 text-indigo-300 border-indigo-500/50{% endif %}">
+                                        {{ colaborador.nombres|slice:":1" }}{{ colaborador.apellidos|slice:":1" }}
+                                    </div>
+                                    <div>
+                                        <div class="font-bold text-white text-base">{{ colaborador.nombres }} {{ colaborador.apellidos }}</div>
+                                        <div class="text-xs text-slate-500 mt-0.5">PIN: ***Oculto</div>
+                                    </div>
+                                </div>
+                            </td>
+                            
+                            <td class="px-6 sm:px-8 py-5">
+                                <div class="font-mono text-cyan-400 mb-1">{{ colaborador.username }}</div>
+                                {% if colaborador.rol == 'ADMIN' %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-purple-500/10 text-purple-400 border border-purple-500/20 uppercase tracking-wider">Administrador</span>
+                                {% else %}
+                                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-[10px] font-bold bg-slate-800 text-slate-300 border border-slate-600 uppercase tracking-wider">Cajero</span>
+                                {% endif %}
+                                {% if not colaborador.activo %}<span class="text-red-400 text-xs ml-2 font-bold">✖ Inactivo</span>{% endif %}
+                            </td>
+                            
+                            <td class="px-6 sm:px-8 py-5 text-slate-400 text-right">
+                                {{ colaborador.fecha_ingreso|date:"d M Y" }}
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const formTitle = document.getElementById('formTitle');
+    const formDesc = document.getElementById('formDesc');
+    const actionType = document.getElementById('actionType');
+    const editStaffId = document.getElementById('editStaffId');
+    const inpUsername = document.getElementById('inpUsername');
+    const inpNombres = document.getElementById('inpNombres');
+    const inpApellidos = document.getElementById('inpApellidos');
+    const inpPassword = document.getElementById('inpPassword');
+    const lblPassword = document.getElementById('lblPassword');
+    const inpPin = document.getElementById('inpPin');
+    const btnSubmit = document.getElementById('btnSubmit');
+    const btnCancelEdit = document.getElementById('btnCancelEdit');
+
+    function editStaff(id, username, nombres, apellidos) {
+        // Change Form State to EDIT
+        formTitle.textContent = "Editar Integrante";
+        formTitle.classList.replace('text-white', 'text-cyan-400');
+        formDesc.textContent = "Actualiza los datos de " + nombres;
+        
+        actionType.value = "edit";
+        editStaffId.value = id;
+        
+        inpUsername.value = username;
+        inpNombres.value = nombres;
+        inpApellidos.value = apellidos;
+        
+        // El PIN y Password se dejan en blanco por seguridad
+        inpPin.value = "";
+        inpPin.removeAttribute('required');
+        inpPin.placeholder = "Omitir p/ mantener igual";
+        
+        // Password becomes optional during edit
+        inpPassword.removeAttribute('required');
+        inpPassword.placeholder = "Omitir p/ mantener igual";
+        lblPassword.textContent = "Nueva Contraseña (Opcional)";
+
+        btnSubmit.textContent = "Guardar Cambios";
+        btnCancelEdit.classList.remove('hidden');
+
+        // Scroll al form en móviles
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function resetForm() {
+        formTitle.textContent = "Nuevo Integrante";
+        formTitle.classList.replace('text-cyan-400', 'text-white');
+        formDesc.textContent = "Registra a un nuevo miembro del equipo.";
+        
+        actionType.value = "create";
+        editStaffId.value = "";
+        
+        inpUsername.value = "";
+        inpNombres.value = "";
+        inpApellidos.value = "";
+        inpPin.value = "";
+        inpPassword.value = "";
+        
+        inpPin.setAttribute('required', 'required');
+        inpPin.placeholder = "1234";
+        
+        inpPassword.setAttribute('required', 'required');
+        inpPassword.placeholder = "Mínimo 8 carac.";
+        lblPassword.textContent = "Contraseña Completa";
+
+        btnSubmit.textContent = "Registrar Integrante";
+        btnCancelEdit.classList.add('hidden');
+    }
+</script>
+{% endblock %}

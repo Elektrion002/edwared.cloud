@@ -1,0 +1,18 @@
+[Unit]
+Description=gunicorn daemon for Edwared Cloud
+After=network.target
+
+[Service]
+User=edwared
+Group=www-data
+WorkingDirectory=/var/www/edwared_cloud
+ExecStart=/var/www/edwared_cloud/venv/bin/gunicorn \
+          --access-logfile - \
+          --workers 3 \
+          --bind unix:/run/gunicorn/gunicorn.sock \
+          edwared_cloud.wsgi:application
+RuntimeDirectory=gunicorn
+RuntimeDirectoryMode=0755
+
+[Install]
+WantedBy=multi-user.target

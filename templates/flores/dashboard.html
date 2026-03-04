@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block title %}Flores | Panel de Control{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto mt-8">
+    
+    <!-- Cabecera del Módulo -->
+    <div class="glass-panel p-6 rounded-2xl mb-8 flex items-center justify-between border-l-4 border-fuchsia-500">
+        <div>
+            <h1 class="text-3xl font-bold text-white mb-1">
+                <span class="text-fuchsia-400">Panel:</span> Preventa de Flores
+            </h1>
+            <p class="text-slate-400">Gestión de inventario, pedidos y fechas clave (14 Feb, Día de las Madres, etc).</p>
+        </div>
+        <a href="/" class="text-slate-400 hover:text-white transition flex items-center bg-slate-800 px-4 py-2 rounded-lg">
+            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+            Volver al Ecosistema
+        </a>
+    </div>
+
+    <!-- Grid de Estadísticas (Mockup) -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="glass-panel p-6 rounded-xl text-center">
+            <div class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-2">Preventas Activas</div>
+            <div class="text-4xl font-black text-fuchsia-400">28</div>
+        </div>
+        <div class="glass-panel p-6 rounded-xl text-center">
+            <div class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-2">Inventario Rosas</div>
+            <div class="text-4xl font-black text-white">450</div>
+        </div>
+        <div class="glass-panel p-6 rounded-xl text-center">
+            <div class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-2">Entregas Hoy</div>
+            <div class="text-4xl font-black text-white">12</div>
+        </div>
+    </div>
+
+    <!-- Botones de Acción Rápida -->
+    <div class="flex gap-4">
+        <button class="flex-1 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-semibold py-4 rounded-xl transition shadow-lg shadow-fuchsia-500/20">
+            Nueva Preventa
+        </button>
+        <button class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-4 rounded-xl transition">
+            Actualizar Inventario
+        </button>
+    </div>
+</div>
+{% endblock %}

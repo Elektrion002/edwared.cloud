@@ -1,0 +1,219 @@
+{% extends 'base.html' %}
+
+{% block title %}Analítica y Rendimiento | Panadería{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-6">
+    <!-- Header -->
+    <div class="flex flex-col md:flex-row items-start md:items-center justify-between mb-8">
+        <div>
+            <a href="{% url 'panaderia:admin_home' %}" class="text-slate-400 hover:text-white flex items-center mb-4 transition font-semibold">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Volver al Dashboard
+            </a>
+            <h1 class="text-3xl font-black text-white flex items-center">
+                <svg class="w-8 h-8 mr-3 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"></path></svg>
+                Dashboard de Decisión
+            </h1>
+            <p class="text-slate-400 mt-2">Métricas de lealtad, cajeros destacados y auditoría global.</p>
+        </div>
+        
+        <!-- Filtros Rápidos de Fecha (Kardex) -->
+        <div class="mt-6 md:mt-0 bg-slate-900 border border-slate-700 p-1 rounded-xl inline-flex space-x-1 shadow-lg overflow-x-auto max-w-full">
+            <a href="?rango=hoy" class="px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition {% if rango_activo == 'hoy' %}bg-purple-600 text-white shadow-md{% else %}text-slate-400 hover:text-white hover:bg-slate-800{% endif %}">Hoy</a>
+            <a href="?rango=ayer" class="px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition {% if rango_activo == 'ayer' %}bg-purple-600 text-white shadow-md{% else %}text-slate-400 hover:text-white hover:bg-slate-800{% endif %}">Ayer</a>
+            <a href="?rango=semana" class="px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition {% if rango_activo == 'semana' %}bg-purple-600 text-white shadow-md{% else %}text-slate-400 hover:text-white hover:bg-slate-800{% endif %}">7 Días</a>
+            <a href="?rango=mes" class="px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition {% if rango_activo == 'mes' %}bg-purple-600 text-white shadow-md{% else %}text-slate-400 hover:text-white hover:bg-slate-800{% endif %}">Este Mes</a>
+            <a href="?rango=todo" class="px-4 py-2 rounded-lg text-sm font-bold whitespace-nowrap transition {% if rango_activo == 'todo' %}bg-purple-600 text-white shadow-md{% else %}text-slate-400 hover:text-white hover:bg-slate-800{% endif %}">Histórico</a>
+        </div>
+    </div>
+
+    <!-- 1. KPIs Globales -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+        <div class="glass-panel p-6 rounded-2xl border-l-4 border-cyan-500 shadow-lg relative overflow-hidden group">
+            <div class="absolute -right-6 -bottom-6 text-cyan-500/10 group-hover:scale-110 transition duration-500">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
+            </div>
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1 block relative z-10">Padrón de Clientes</p>
+            <h2 class="text-4xl font-black text-white relative z-10">{{ kpi_total_clientes }} <span class="text-sm font-medium text-slate-500">Activos</span></h2>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl border-l-4 border-yellow-500 shadow-lg relative overflow-hidden group">
+             <div class="absolute -right-6 -bottom-6 text-yellow-500/10 group-hover:scale-110 transition duration-500">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 20 20"><path d="M11 3a1 1 0 100 2h2.586l-6.293 6.293a1 1 0 101.414 1.414L15 6.414V9a1 1 0 102 0V4a1 1 0 00-1-1h-5z"></path></svg>
+            </div>
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1 block relative z-10">Puntos en Circulación</p>
+            <h2 class="text-4xl font-black text-yellow-500 relative z-10">{{ kpi_circulando }} <span class="text-sm font-medium text-slate-500">Balance</span></h2>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl border-l-4 border-emerald-500 shadow-lg relative overflow-hidden group">
+            <div class="absolute -right-6 -bottom-6 text-emerald-500/10 group-hover:scale-110 transition duration-500">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-11a1 1 0 10-2 0v2H7a1 1 0 100 2h2v2a1 1 0 102 0v-2h2a1 1 0 100-2h-2V7z" clip-rule="evenodd"></path></svg>
+            </div>
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1 block relative z-10">Emisión Total (Vida)</p>
+            <h2 class="text-4xl font-black text-emerald-400 relative z-10">{{ kpi_otorgados }} <span class="text-sm font-medium text-slate-500">Puntos</span></h2>
+        </div>
+
+        <div class="glass-panel p-6 rounded-2xl border-l-4 border-rose-500 shadow-lg relative overflow-hidden group">
+             <div class="absolute -right-6 -bottom-6 text-rose-500/10 group-hover:scale-110 transition duration-500">
+                <svg class="w-32 h-32" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM7 9a1 1 0 000 2h6a1 1 0 100-2H7z" clip-rule="evenodd"></path></svg>
+            </div>
+            <p class="text-sm font-bold text-slate-400 uppercase tracking-wider mb-1 block relative z-10">Gastado / Canjeado</p>
+            <h2 class="text-4xl font-black text-rose-400 relative z-10">{{ kpi_canjeados }} <span class="text-sm font-medium text-slate-500">Puntos</span></h2>
+        </div>
+    </div>
+
+    <!-- 2. Tops (Staff y Clientes) -->
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-8">
+        
+        <!-- Ranking Clientes -->
+        <div class="lg:col-span-2 glass-panel rounded-2xl border border-slate-700 overflow-hidden shadow-xl flex flex-col">
+            <div class="p-6 border-b border-slate-700/50 bg-slate-900/50 flex items-center justify-between">
+                <h3 class="text-lg font-bold text-white flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"></path></svg>
+                    Top 10 Clientes Frecuentes
+                </h3>
+                <span class="text-xs font-bold bg-cyan-500/20 text-cyan-400 px-3 py-1 rounded-full border border-cyan-500/30">Por Balance</span>
+            </div>
+            <div class="overflow-x-auto flex-grow">
+                <table class="w-full text-left text-sm">
+                    <thead class="text-xs uppercase text-slate-500 bg-slate-900 border-b border-slate-800">
+                        <tr>
+                            <th class="px-6 py-4">#</th>
+                            <th class="px-6 py-4">Cliente</th>
+                            <th class="px-6 py-4">Status</th>
+                            <th class="px-6 py-4 text-right">Puntos Acumulados</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-800/50">
+                        {% for cliente in top_clientes %}
+                        <tr class="hover:bg-slate-800/40 transition">
+                            <td class="px-6 py-4 text-slate-500 font-bold font-mono">{{ forloop.counter }}</td>
+                            <td class="px-6 py-4 font-bold text-white flex items-center">
+                                <span class="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center text-xs mr-3 border border-slate-700 text-slate-300">
+                                    {{ cliente.nombre|slice:":2"|upper }}
+                                </span>
+                                {{ cliente.nombre }}
+                            </td>
+                            <td class="px-6 py-4">
+                                {% if cliente.requiere_cambio_pin %}
+                                <span class="bg-red-500/20 text-red-400 text-xs px-2 py-1 rounded inline-flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-red-400 mr-1.5"></span> Bloqueado</span>
+                                {% else %}
+                                <span class="bg-green-500/20 text-green-400 text-xs px-2 py-1 rounded inline-flex items-center"><span class="w-1.5 h-1.5 rounded-full bg-green-400 mr-1.5"></span> OK</span>
+                                {% endif %}
+                            </td>
+                            <td class="px-6 py-4 text-right">
+                                <span class="font-black text-yellow-500 text-base">{{ cliente.puntos_actuales }}</span>
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr><td colspan="4" class="px-6 py-8 text-center text-slate-500">Sin data de clientes.</td></tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- Auditoría Cajeros -->
+        <div class="glass-panel rounded-2xl border border-slate-700 shadow-xl overflow-hidden flex flex-col bg-gradient-to-br from-indigo-900/40 to-slate-900/90">
+            <div class="p-6 border-b border-indigo-500/20 flex items-center justify-between">
+                 <h3 class="text-lg font-bold text-white flex items-center">
+                    <svg class="w-5 h-5 mr-2 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                    Top Cajeros
+                </h3>
+            </div>
+            <div class="p-6 flex-grow space-y-5">
+                {% for cajero in top_cajeros %}
+                <div class="flex items-center justify-between group">
+                    <div class="flex items-center">
+                        <div class="w-10 h-10 rounded-full bg-indigo-500/20 border border-indigo-500/30 flex items-center justify-center text-indigo-300 font-bold mr-3 shadow-inner">
+                            {{ cajero.nombres|slice:":1" }}{{ cajero.apellidos|slice:":1" }}
+                        </div>
+                        <div>
+                            <p class="font-bold text-white text-sm group-hover:text-indigo-300 transition">{{ cajero.nombres }}</p>
+                            <p class="text-xs text-slate-400">{{ cajero.total_movimientos|default:0 }} transacciones</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <span class="block text-sm font-black text-emerald-400">+{{ cajero.total_puntos_dados|default:0 }}</span>
+                        <span class="text-[10px] text-slate-500 uppercase tracking-widest">Abonados</span>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-slate-500 py-10">Sin staff registrado / activo.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Kardex Auditoría Goblal -->
+    <div class="glass-panel rounded-2xl border border-slate-700 shadow-xl overflow-hidden">
+        <div class="p-6 md:p-8 bg-slate-900 border-b border-slate-700 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-center">
+            <div class="lg:col-span-2">
+                <h3 class="text-2xl font-bold text-white mb-2 flex items-center">
+                    <svg class="w-6 h-6 mr-2 text-purple-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    Kardex Auditoría <span class="text-purple-400 ml-2">({{ rango_txt }})</span>
+                </h3>
+                <p class="text-slate-400 text-sm">Registro inmutable de cada transacción efectuada en caja para detectar inconsistencias.</p>
+            </div>
+            
+            <!-- Resumen Rango -->
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-700 flex justify-around">
+                <div class="text-center">
+                    <p class="text-xs text-slate-500 uppercase font-bold mb-1">Entrada</p>
+                    <p class="font-black text-emerald-400">+{{ resumen_rango.otorgados }}</p>
+                </div>
+                <div class="w-px bg-slate-700"></div>
+                <div class="text-center">
+                    <p class="text-xs text-slate-500 uppercase font-bold mb-1">Salida (Canje)</p>
+                    <p class="font-black text-rose-400">-{{ resumen_rango.canjeados }}</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto relative max-h-[600px] overflow-y-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+                <thead class="bg-slate-900 uppercase text-xs text-slate-500 sticky top-0 z-10 shadow-md">
+                    <tr>
+                        <th class="px-6 py-4 font-bold">Fecha / Hora</th>
+                        <th class="px-6 py-4 font-bold">Movimiento</th>
+                        <th class="px-6 py-4 font-bold text-center">Pts</th>
+                        <th class="px-6 py-4 font-bold">Cajero Resp.</th>
+                        <th class="px-6 py-4 font-bold">Beneficiario</th>
+                        <th class="px-6 py-4 font-bold">Concepto (Nota)</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800/80">
+                    {% for mov in kardex %}
+                    <tr class="hover:bg-slate-800/50 transition">
+                        <td class="px-6 py-3 whitespace-nowrap">
+                            <span class="block text-white font-medium">{{ mov.fecha|date:"d M, Y" }}</span>
+                            <span class="text-xs text-slate-500">{{ mov.fecha|time:"h:i:s A" }}</span>
+                        </td>
+                        <td class="px-6 py-3">
+                            {% if mov.tipo == 'SUMA' %}
+                            <span class="bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded text-xs font-bold inline-flex items-center"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 10l7-7m0 0l7 7m-7-7v18"></path></svg> Abono</span>
+                            {% elif mov.tipo == 'CANJE' %}
+                            <span class="bg-rose-500/20 text-rose-400 border border-rose-500/30 px-2 py-0.5 rounded text-xs font-bold inline-flex items-center"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path></svg> Canje</span>
+                            {% else %}
+                            <span class="bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 px-2 py-0.5 rounded text-xs font-bold inline-flex items-center"><svg class="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg> Ajuste</span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-3 text-center font-mono font-black {% if mov.puntos_involucrados > 0 %}text-emerald-400{% else %}text-rose-400{% endif %}">
+                            {% if mov.puntos_involucrados > 0 %}+{% endif %}{{ mov.puntos_involucrados }}
+                        </td>
+                        <td class="px-6 py-3 font-medium text-white">{{ mov.staff_responsable.nombres|default:"Sistema/Vacio" }}</td>
+                        <td class="px-6 py-3 font-medium text-cyan-200">{{ mov.cliente.nombre }}</td>
+                        <td class="px-6 py-3 text-slate-400 text-xs truncate max-w-[200px]" title="{{ mov.nota_cajero }}">{{ mov.nota_cajero|default:"--" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="6" class="px-6 py-12 text-center text-slate-500 bg-slate-800/20">No hay movimientos registrados en este rango de fechas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

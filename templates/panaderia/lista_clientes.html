@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block title %}Directorio de Clientes | CRM Panadería{% endblock %}
+
+{% block content %}
+<div class="max-w-7xl mx-auto mt-6">
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <a href="{% url 'panaderia:admin_home' %}" class="text-slate-400 hover:text-white flex items-center mb-4 transition">
+                <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Volver al Dashboard
+            </a>
+            <h1 class="text-3xl font-black text-white flex items-center">
+                <svg class="w-8 h-8 mr-3 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
+                Gestión Maestra de Clientes
+            </h1>
+            <p class="text-slate-400 mt-2">Padrón completo del CRM. Edita o desactiva clientes globalmente.</p>
+        </div>
+    </div>
+
+    {% if messages %}
+    <div class="mb-6 space-y-2">
+        {% for message in messages %}
+            <div class="p-4 rounded-xl {% if message.tags == 'success' %}bg-green-500/20 text-green-300 border border-green-500/50{% else %}bg-red-500/20 text-red-300 border border-red-500/50 flex items-center{% endif %}">
+                {% if message.tags != 'success' %}<svg class="w-5 h-5 mr-2 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>{% endif %}
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    <!-- Buscador de Directorio -->
+    <div class="glass-panel p-6 rounded-2xl mb-8 border border-slate-700">
+        <form method="GET" action="{% url 'panaderia:gestionar_clientes' %}" class="flex flex-col md:flex-row gap-4">
+            <div class="relative flex-grow">
+                <input type="text" name="q" value="{{ search_query }}" placeholder="Buscar por Nombre o Teléfono celular completo..." class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 pl-12 text-white focus:outline-none focus:border-cyan-500 transition">
+                <svg class="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            </div>
+            <button type="submit" class="bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-8 py-3 rounded-xl transition shadow-lg shadow-cyan-600/20">Filtrar Padrón</button>
+            {% if search_query %}
+            <a href="{% url 'panaderia:gestionar_clientes' %}" class="bg-slate-800 hover:bg-slate-700 text-white px-6 py-3 rounded-xl transition text-center flex items-center justify-center">Limpiar</a>
+            {% endif %}
+        </form>
+    </div>
+
+    <!-- Tabla de Clientes CRM -->
+    <div class="glass-panel rounded-2xl border border-slate-700 overflow-hidden shadow-2xl">
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm text-slate-300">
+                <thead class="bg-slate-900/80 text-slate-400 text-xs uppercase tracking-wider">
+                    <tr>
+                        <th class="px-6 py-4">Cliente (Razón Social)</th>
+                        <th class="px-6 py-4">Teléfono (WhatsApp)</th>
+                        <th class="px-6 py-4">Puntos Gbl</th>
+                        <th class="px-6 py-4 text-center">Estado</th>
+                        <th class="px-6 py-4 text-right">Acciones Admin</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-slate-800">
+                    {% for cliente in lista_clientes %}
+                    <tr class="hover:bg-slate-800/40 transition {% if not cliente.activo %}opacity-50 grayscale{% endif %}">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center">
+                                <div class="w-10 h-10 rounded-full {% if cliente.activo %}bg-cyan-500/20 text-cyan-400 border border-cyan-500/30{% else %}bg-slate-800 text-slate-500{% endif %} flex items-center justify-center font-bold mr-3">
+                                    {{ cliente.nombre|slice:":2"|upper }}
+                                </div>
+                                <div>
+                                    <div class="font-bold text-white text-base">{{ cliente.nombre }}</div>
+                                    <div class="text-xs text-slate-500 mt-0.5">ID: {{ cliente.id|stringformat:"s"|slice:":8" }}</div>
+                                </div>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 font-mono text-cyan-200">{{ cliente.telefono }}</td>
+                        <td class="px-6 py-4">
+                            <span class="font-black text-yellow-500 bg-yellow-500/10 px-3 py-1 rounded-full border border-yellow-500/20">{{ cliente.puntos_actuales }} pts</span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            {% if cliente.activo %}
+                                <span class="bg-green-500/20 text-green-400 border border-green-500/30 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center">
+                                    <span class="w-2 h-2 rounded-full bg-green-400 mr-2 animate-pulse"></span> Activo
+                                </span>
+                            {% else %}
+                                <span class="bg-red-500/20 text-red-400 border border-red-500/30 px-3 py-1 rounded-full text-xs font-bold inline-flex items-center">
+                                    Suspendido
+                                </span>
+                            {% endif %}
+                        </td>
+                        <td class="px-6 py-4 text-right">
+                            <div class="flex items-center justify-end space-x-2 relative" x-data="{ open: false }">
+                                
+                                <!-- Botón Editar -->
+                                <button onclick="abrirModalEdicion('{{ cliente.id }}', '{{ cliente.nombre }}', '{{ cliente.telefono }}')" class="bg-slate-700 hover:bg-slate-600 text-white p-2 rounded-lg transition" title="Editar Expediente">
+                                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                                </button>
+                                
+                                <!-- Toggle Status -->
+                                <form method="POST" action="{% url 'panaderia:eliminar_cliente' cliente.id %}" class="inline-block m-0 relative group">
+                                    {% csrf_token %}
+                                    {% if cliente.activo %}
+                                    <button type="submit" onclick="return confirm('¿Decretar baja lógica? El cliente ya no podrá iniciar sesión y desaparecerá de la caja, pero sus puntos se conservan.')" class="bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/30 p-2 rounded-lg transition" title="Dar de Baja a {{ cliente.nombre }}">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"></path></svg>
+                                    </button>
+                                    {% else %}
+                                    <button type="submit" class="bg-green-500/10 hover:bg-green-500/20 text-green-400 border border-green-500/30 p-2 rounded-lg transition" title="Reactivar">
+                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                    </button>
+                                    {% endif %}
+                                </form>
+
+                            </div>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="px-6 py-12 text-center text-slate-500">
+                            No hay clientes registrados o que coincidan con la búsqueda.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Edición CRM -->
+<div id="modalEdicion" class="fixed inset-0 bg-slate-900/90 backdrop-blur-sm z-50 hidden flex items-center justify-center p-4 opacity-0 transition-opacity duration-300">
+    <div class="glass-panel w-full max-w-lg rounded-2xl border border-slate-700 shadow-2xl overflow-hidden transform scale-95 transition-transform duration-300" id="modalEdicionContent">
+        <div class="p-6 border-b border-slate-700 flex justify-between items-center bg-slate-800/50">
+            <h3 class="text-xl font-bold text-white">Editar Expediente de Cliente</h3>
+            <button onclick="cerrarModalEdicion()" class="text-slate-400 hover:text-white transition">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+        </div>
+        
+        <form method="POST" action="{% url 'panaderia:gestionar_clientes' %}" class="p-6">
+            {% csrf_token %}
+            <input type="hidden" name="action_type" value="edit">
+            <input type="hidden" name="cliente_id" id="edit_cliente_id">
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Nombre Completo</label>
+                    <input type="text" name="nombre" id="edit_nombre" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Teléfono Celular (Único activo)</label>
+                    <input type="number" name="telefono" id="edit_telefono" required class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500" title="Un teléfono no puede estar dado de alta en dos clientes activos al mismo tiempo.">
+                    <p class="text-xs text-orange-400 mt-2">⚠️ Al guardar, el sistema verificará que este número no colisione con otro cliente dado de alta.</p>
+                </div>
+
+                <hr class="border-slate-800 my-4">
+
+                <div>
+                    <label class="block text-sm font-medium text-slate-400 mb-2">Forzar Nuevo PIN (Opcional)</label>
+                    <input type="number" name="pin" placeholder="(Dejar en blanco para mantener actual)" class="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-cyan-500">
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end space-x-3">
+                <button type="button" onclick="cerrarModalEdicion()" class="px-6 py-3 rounded-xl font-bold text-slate-300 hover:bg-slate-800 transition">Cancelar</button>
+                <button type="submit" class="bg-cyan-600 hover:bg-cyan-500 text-white px-6 py-3 rounded-xl font-bold transition shadow-lg shadow-cyan-600/20">Guardar Cambios</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function abrirModalEdicion(id, nombre, telefono) {
+        document.getElementById('edit_cliente_id').value = id;
+        document.getElementById('edit_nombre').value = nombre;
+        document.getElementById('edit_telefono').value = telefono;
+        
+        const modal = document.getElementById('modalEdicion');
+        const modalContent = document.getElementById('modalEdicionContent');
+        
+        modal.classList.remove('hidden');
+        // Pequeño delay para la animación
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            modalContent.classList.remove('scale-95');
+        }, 10);
+    }
+
+    function cerrarModalEdicion() {
+        const modal = document.getElementById('modalEdicion');
+        const modalContent = document.getElementById('modalEdicionContent');
+        
+        modal.classList.add('opacity-0');
+        modalContent.classList.add('scale-95');
+        
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+</script>
+{% endblock %}

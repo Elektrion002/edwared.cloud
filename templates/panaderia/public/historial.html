@@ -1,0 +1,77 @@
+{% extends 'base_mobile.html' %}
+
+{% block title %}Mi Historial | {{ cliente.nombre }}{% endblock %}
+
+{% block content %}
+<!-- Decorative Background Blurs -->
+<div class="absolute top-[-10%] right-[-10%] w-[120%] h-96 bg-gradient-to-b from-indigo-600/20 via-slate-800/10 to-transparent blur-3xl pointer-events-none -z-10"></div>
+
+<div class="w-full px-5 py-8 animate-float-up flex flex-col min-h-screen">
+    
+    <!-- Top Bar -->
+    <div class="flex justify-between items-center mb-6">
+        <a href="{% url 'panaderia:mi_credencial' %}" class="flex items-center space-x-2 text-slate-400 hover:text-white transition-colors">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+            <span class="text-sm font-medium">Volver</span>
+        </a>
+        <div class="flex items-center space-x-2">
+            <span class="text-xs font-bold text-slate-500 tracking-wider uppercase">Movimientos</span>
+        </div>
+    </div>
+
+    <!-- Puntos Header -->
+    <div class="glass-panel rounded-[2rem] p-6 mb-6 border border-slate-700/30 flex justify-between items-center">
+        <div>
+            <p class="text-slate-400 text-xs font-semibold uppercase tracking-widest mb-1">Saldo Actual</p>
+            <h2 class="text-3xl font-black text-white tracking-tight">{{ cliente.puntos_actuales }} <span class="text-cyan-400 text-sm font-bold uppercase ml-1">Pts</span></h2>
+        </div>
+        <div class="w-14 h-14 rounded-2xl bg-cyan-500/10 border border-cyan-500/20 flex items-center justify-center">
+            <svg class="w-7 h-7 text-cyan-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+        </div>
+    </div>
+
+    <!-- Timeline de Movimientos -->
+    <div class="flex-grow flex flex-col space-y-4">
+        {% for mov in movimientos %}
+        <div class="glass-panel rounded-2xl p-4 border border-slate-700/20 transition-all hover:border-slate-600/40 relative overflow-hidden group">
+            <!-- Indicator Line based on Type -->
+            <div class="absolute left-0 top-0 bottom-0 w-1 {% if mov.tipo == 'SUMA' %}bg-emerald-500{% elif mov.tipo == 'CANJE' %}bg-rose-500{% else %}bg-amber-500{% endif %}"></div>
+            
+            <div class="flex justify-between items-start pl-2">
+                <div class="flex-grow pr-4">
+                    <div class="flex items-center space-x-2 mb-1">
+                        <span class="text-[10px] font-bold uppercase tracking-widest px-2 py-0.5 rounded-full {% if mov.tipo == 'SUMA' %}bg-emerald-500/10 text-emerald-400{% elif mov.tipo == 'CANJE' %}bg-rose-500/10 text-rose-400{% else %}bg-amber-500/10 text-amber-400{% endif %}">
+                            {{ mov.get_tipo_display }}
+                        </span>
+                        <span class="text-[10px] text-slate-500 font-medium">{{ mov.fecha|date:"d M, Y - H:i" }}</span>
+                    </div>
+                    <h3 class="text-sm font-bold text-slate-200 line-clamp-1">{% if mov.nota_cajero %}{{ mov.nota_cajero }}{% else %}Movimiento de cuenta{% endif %}</h3>
+                    <p class="text-[11px] text-slate-500 mt-0.5 italic">Atendido por: {{ mov.staff_responsable.nombres|default:"Sistema" }}</p>
+                </div>
+                
+                <div class="text-right flex flex-col items-end">
+                    <span class="text-lg font-black {% if mov.puntos_involucrados > 0 %}text-emerald-400{% else %}text-rose-400{% endif %} tracking-tighter">
+                        {% if mov.puntos_involucrados > 0 %}+{% endif %}{{ mov.puntos_involucrados }}
+                    </span>
+                    <span class="text-[9px] font-bold text-slate-600 uppercase">Puntos</span>
+                </div>
+            </div>
+        </div>
+        {% empty %}
+        <div class="flex-grow flex flex-col items-center justify-center py-12 px-6 text-center opacity-60">
+            <div class="w-16 h-16 rounded-full bg-slate-800 flex items-center justify-center mb-4">
+                <svg class="w-8 h-8 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <h4 class="text-slate-300 font-bold mb-1">Sin movimientos aún</h4>
+            <p class="text-xs text-slate-500 max-w-[200px]">Tus compras aparecerán aquí en tiempo real.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Footer Space -->
+    <div class="mt-8 mb-4 text-center">
+        <p class="text-[10px] text-slate-600 font-medium uppercase tracking-[0.2em] mb-1">Seguridad Edwared Cloud</p>
+        <p class="text-[9px] text-slate-700">Tus datos están protegidos con encriptación 5S.</p>
+    </div>
+</div>
+{% endblock %}

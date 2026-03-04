@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Acceso Staff | Panadería{% endblock %}
+
+{% block content %}
+<div class="max-w-md mx-auto mt-20">
+    <div class="glass-panel p-10 rounded-3xl text-center border-t border-indigo-500/20 shadow-xl shadow-indigo-900/20">
+        
+        <div class="w-20 h-20 bg-indigo-500/10 rounded-2xl mx-auto flex items-center justify-center mb-6">
+            <svg class="w-10 h-10 text-indigo-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"></path></svg>
+        </div>
+
+        <h2 class="text-3xl font-bold text-white mb-2">Acceso Administrativo</h2>
+        <p class="text-slate-400 mb-8">Uso exclusivo para Cajeros y Dueños de la Panadería.</p>
+
+        {% if messages %}
+        <div class="bg-red-500/20 border border-red-500/50 text-red-200 p-3 rounded-lg mb-6 text-sm">
+            {% for message in messages %}
+                {{ message }}
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <form method="POST" action="{% url 'panaderia:staff_login' %}" class="space-y-5 text-left">
+            {% csrf_token %}
+            <div>
+                <label class="block text-slate-400 text-sm font-medium mb-2">Usuario (ID)</label>
+                <input type="text" name="username" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition font-mono">
+            </div>
+            <div>
+                <label class="block text-slate-400 text-sm font-medium mb-2">Contraseña o PIN (4 dígitos)</label>
+                <input type="password" name="password" required class="w-full bg-slate-900/50 border border-slate-700 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition tracking-widest text-lg font-mono">
+            </div>
+            
+            <button type="submit" class="w-full bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-500 hover:to-purple-500 text-white font-bold py-4 rounded-xl transition shadow-lg mt-4">
+                Entrar al Sistema
+            </button>
+        </form>
+    </div>
+</div>
+{% endblock %}
