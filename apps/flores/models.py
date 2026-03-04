@@ -7,6 +7,18 @@ class Categoria(models.Model):
     def __str__(self):
         return self.nombre
 
+class Almacen(models.Model):
+    nombre = models.CharField(max_length=100)
+    ubicacion = models.CharField(max_length=255, blank=True, null=True)
+    activo = models.BooleanField(default=True) # Desactivación lógica
+
+    def __str__(self):
+        return self.nombre
+
+    class Meta:
+        verbose_name = "Almacén"
+        verbose_name_plural = "Almacenes"
+
 class Producto(models.Model):
     nombre = models.CharField(max_length=200)
     categoria = models.ForeignKey(Categoria, on_delete=models.CASCADE, related_name='productos')
@@ -16,8 +28,19 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
+class StockAlmacen(models.Model):
+    almacen = models.ForeignKey(Almacen, on_delete=models.CASCADE, related_name='stocks')
+    producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
+    cantidad = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('almacen', 'producto')
+        verbose_name = "Stock en Almacén"
+        verbose_name_plural = "Stocks en Almacenes"
+
 class CargaViaje(models.Model):
     """Stock cargado en el vehículo para un recorrido."""
+    almacen_origen = models.ForeignKey(Almacen, on_delete=models.PROTECT, null=True)
     producto = models.ForeignKey(Producto, on_delete=models.CASCADE)
     cantidad_inicial = models.PositiveIntegerField()
     cantidad_actual = models.PositiveIntegerField()

@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Categoria, Producto, CargaViaje, NotaVenta, DetalleVenta, Abono
+from .models import Categoria, Almacen, StockAlmacen, Producto, CargaViaje, NotaVenta, DetalleVenta, Abono
 
 class DetalleVentaInline(admin.TabularInline):
     model = DetalleVenta
@@ -9,16 +9,20 @@ class DetalleVentaInline(admin.TabularInline):
 class CategoriaAdmin(admin.ModelAdmin):
     list_display = ('nombre',)
 
-@admin.register(Producto)
-class ProductoAdmin(admin.ModelAdmin):
-    list_display = ('nombre', 'categoria', 'precio_base', 'activo')
-    list_filter = ('categoria', 'activo')
-    search_fields = ('nombre',)
+@admin.register(Almacen)
+class AlmacenAdmin(admin.ModelAdmin):
+    list_display = ('nombre', 'ubicacion', 'activo')
+    list_filter = ('activo',)
+
+@admin.register(StockAlmacen)
+class StockAlmacenAdmin(admin.ModelAdmin):
+    list_display = ('almacen', 'producto', 'cantidad')
+    list_filter = ('almacen', 'producto')
 
 @admin.register(CargaViaje)
 class CargaViajeAdmin(admin.ModelAdmin):
-    list_display = ('producto', 'cantidad_actual', 'cantidad_inicial', 'fecha_carga')
-    list_filter = ('fecha_carga',)
+    list_display = ('id', 'almacen_origen', 'producto', 'cantidad_actual', 'cantidad_inicial', 'fecha_carga')
+    list_filter = ('almacen_origen', 'fecha_carga')
 
 @admin.register(NotaVenta)
 class NotaVentaAdmin(admin.ModelAdmin):
