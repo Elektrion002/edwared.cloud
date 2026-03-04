@@ -1,48 +1,250 @@
-{% extends 'base.html' %}
-
-{% block title %}Flores | Panel de Control{% endblock %}
-
-{% block content %}
-<div class="max-w-5xl mx-auto mt-8">
-    
-    <!-- Cabecera del Módulo -->
-    <div class="glass-panel p-6 rounded-2xl mb-8 flex items-center justify-between border-l-4 border-fuchsia-500">
-        <div>
-            <h1 class="text-3xl font-bold text-white mb-1">
-                <span class="text-fuchsia-400">Panel:</span> Preventa de Flores
-            </h1>
-            <p class="text-slate-400">Gestión de inventario, pedidos y fechas clave (14 Feb, Día de las Madres, etc).</p>
-        </div>
-        <a href="/" class="text-slate-400 hover:text-white transition flex items-center bg-slate-800 px-4 py-2 rounded-lg">
-            <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
-            Volver al Ecosistema
+{% extends 'base.html' %} {% block title %}Flores | Dashboard Itinerante{%
+endblock %} {% block extra_head %}
+<style>
+  .card-fuchsia {
+    border-top: 4px solid #d946ef;
+  }
+  .btn-mobile {
+    min-height: 64px;
+  }
+</style>
+{% endblock %} {% block content %}
+<div class="max-w-4xl mx-auto px-2 md:px-0">
+  <!-- Cabecera Mobile Friendly -->
+  <div class="glass-panel p-5 rounded-3xl mb-6 shadow-2xl">
+    <div
+      class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+    >
+      <div>
+        <h1
+          class="text-2xl md:text-3xl font-black text-white flex items-center gap-2"
+        >
+          <span class="bg-fuchsia-600 p-2 rounded-lg">
+            <svg
+              class="w-6 h-6 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 21c4.418 0 8-3.582 8-8s-3.582-8-8-8-8 3.582-8 8 3.582 8 8 8z"
+                stroke-width="2"
+              />
+              <path
+                d="M12 11c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z"
+                stroke-width="2"
+              />
+            </svg>
+          </span>
+          Preventa Flores
+        </h1>
+        <p class="text-slate-400 mt-1 text-sm">
+          Control de venta en ruta y crédito.
+        </p>
+      </div>
+      <div class="flex gap-2">
+        <a
+          href="/"
+          class="flex-1 md:flex-none glass-panel px-4 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center justify-center"
+        >
+          Cerrar Sesión
         </a>
+      </div>
     </div>
+  </div>
 
-    <!-- Grid de Estadísticas (Mockup) -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="glass-panel p-6 rounded-xl text-center">
-            <div class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-2">Preventas Activas</div>
-            <div class="text-4xl font-black text-fuchsia-400">28</div>
-        </div>
-        <div class="glass-panel p-6 rounded-xl text-center">
-            <div class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-2">Inventario Rosas</div>
-            <div class="text-4xl font-black text-white">450</div>
-        </div>
-        <div class="glass-panel p-6 rounded-xl text-center">
-            <div class="text-slate-400 text-sm font-semibold uppercase tracking-wider mb-2">Entregas Hoy</div>
-            <div class="text-4xl font-black text-white">12</div>
-        </div>
+  <!-- Estadísticas Reales -->
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6 mb-6">
+    <div
+      class="glass-panel p-4 md:p-6 rounded-3xl card-fuchsia overflow-hidden relative"
+    >
+      <div
+        class="text-slate-500 text-[10px] md:text-xs font-bold uppercase tracking-widest"
+      >
+        En Ruta (Activas)
+      </div>
+      <div class="text-3xl md:text-5xl font-black text-white mt-1">
+        {{ preventas_activas }}
+      </div>
+      <svg
+        class="absolute -right-2 -bottom-2 w-16 h-16 text-white/5"
+        fill="currentColor"
+        viewBox="0 0 20 20"
+      >
+        <path
+          d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.01.042l1.358 5.43-.893.892C3.74 11.846 4.58 13 5.71 13h10.29a1 1 0 100-2H5.71c-.13 0-.18-.1-.08-.2l.5-.5a1 1 0 00.29-.707V7a1 1 0 00-1-1H3.414l-.707-.707A1 1 0 002.586 5H4.17l-.5-2H3z"
+        />
+      </svg>
     </div>
+    <div class="glass-panel p-4 md:p-6 rounded-3xl border-t-4 border-slate-500">
+      <div
+        class="text-slate-500 text-[10px] md:text-xs font-bold uppercase tracking-widest"
+      >
+        Catálogo SKUs
+      </div>
+      <div class="text-3xl md:text-5xl font-black text-white mt-1">
+        {{ total_productos }}
+      </div>
+    </div>
+    <div
+      class="glass-panel p-4 md:p-6 rounded-3xl border-t-4 border-sky-500 col-span-2 md:col-span-1"
+    >
+      <div
+        class="text-slate-500 text-[10px] md:text-xs font-bold uppercase tracking-widest"
+      >
+        Estado de Caja
+      </div>
+      <div class="text-2xl md:text-3xl font-black text-sky-400 mt-1">$0.00</div>
+    </div>
+  </div>
 
-    <!-- Botones de Acción Rápida -->
-    <div class="flex gap-4">
-        <button class="flex-1 bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-semibold py-4 rounded-xl transition shadow-lg shadow-fuchsia-500/20">
-            Nueva Preventa
-        </button>
-        <button class="flex-1 bg-slate-700 hover:bg-slate-600 text-white font-semibold py-4 rounded-xl transition">
-            Actualizar Inventario
-        </button>
+  <!-- Menú de Operación Mobile -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+    <a
+      href="{% url 'flores:home' %}"
+      class="btn-mobile bg-fuchsia-600 hover:bg-fuchsia-500 rounded-3xl flex items-center justify-center gap-3 text-white font-bold text-lg shadow-xl shadow-fuchsia-900/40 transition-all active:scale-95"
+    >
+      <svg
+        class="w-6 h-6"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path d="M12 4v16m8-8H4" stroke-width="3" stroke-linecap="round" />
+      </svg>
+      NUEVA NOTA / VENTA
+    </a>
+    <a
+      href="{% url 'flores:home' %}"
+      class="btn-mobile glass-panel hover:bg-slate-800 rounded-3xl flex items-center justify-center gap-3 text-white font-bold text-lg transition-all active:scale-95"
+    >
+      <svg
+        class="w-6 h-6 text-fuchsia-400"
+        fill="none"
+        stroke="currentColor"
+        viewBox="0 0 24 24"
+      >
+        <path
+          d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        />
+      </svg>
+      CARGAR INVENTARIO
+    </a>
+  </div>
+
+  <!-- Seguimiento de Carga Actual -->
+  <div class="glass-panel rounded-3xl overflow-hidden mb-8">
+    <div class="p-5 border-b border-white/5 flex items-center justify-between">
+      <h2 class="font-bold text-slate-200">Inventario en Vehículo</h2>
+      <span
+        class="text-[10px] bg-slate-800 text-slate-400 px-2 py-1 rounded-full font-mono uppercase"
+        >Tiempo Real</span
+      >
     </div>
+    <div class="p-2">
+      {% for item in carga_actual %}
+      <div
+        class="flex items-center justify-between p-4 hover:bg-white/5 transition rounded-2xl"
+      >
+        <div>
+          <p class="font-bold text-white text-sm">{{ item.producto.nombre }}</p>
+          <p class="text-[10px] text-slate-500">
+            {{ item.producto.categoria.nombre }}
+          </p>
+        </div>
+        <div class="text-right">
+          <p class="text-lg font-black text-fuchsia-400">
+            {{ item.cantidad_actual }}
+          </p>
+          <p class="text-[9px] text-slate-600">
+            de {{ item.cantidad_inicial }}u
+          </p>
+        </div>
+      </div>
+      {% empty %}
+      <div class="p-8 text-center">
+        <p class="text-slate-500 text-sm">
+          No hay carga activa. Inicia un nuevo viaje.
+        </p>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Quick Links Móviles -->
+  <div class="flex justify-around py-4 border-t border-white/5">
+    <button
+      class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition"
+    >
+      <div class="p-3 rounded-full bg-slate-800 text-slate-400">
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+      <span
+        class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter"
+        >Clientes</span
+      >
+    </button>
+    <button
+      class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition"
+    >
+      <div class="p-3 rounded-full bg-slate-800 text-slate-400">
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+      <span
+        class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter"
+        >Abonos</span
+      >
+    </button>
+    <button
+      class="flex flex-col items-center gap-1 opacity-50 hover:opacity-100 transition"
+    >
+      <div class="p-3 rounded-full bg-slate-800 text-slate-400">
+        <svg
+          class="w-5 h-5"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path
+            d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+          />
+        </svg>
+      </div>
+      <span
+        class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter"
+        >WhatsApp</span
+      >
+    </button>
+  </div>
 </div>
 {% endblock %}
