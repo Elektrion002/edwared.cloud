@@ -9,9 +9,5 @@ class DetalleVentaInline(admin.TabularInline):
 class CategoriaAdmin(admin.ModelAdmin):
     list_display = ('nombre',)
 
-@admin.register(Categoria)
-class CategoriaAdmin(admin.ModelAdmin):
-    list_display = ('nombre',)
-
 # Los modelos de negocio (Almacen, Producto, Venta) se gestionarán 
 # internamente en el subsistema de Flores, no aquí.
