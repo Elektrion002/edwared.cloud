@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% block title %}Gestionar Almacenes | Florería{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto px-4">
+    <div class="glass-panel p-6 rounded-3xl mb-8 flex items-center justify-between">
+        <h1 class="text-xl font-bold">Infraestructura de Almacenes</h1>
+        <a href="{% url 'flores:admin_dashboard' %}" class="text-slate-400 text-sm">Volver al Admin</a>
+    </div>
+
+    <div class="space-y-4">
+        {% for alm in almacenes %}
+        <div class="glass-panel p-6 rounded-3xl flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="p-3 bg-slate-800 rounded-2xl">
+                    <svg class="w-6 h-6 text-fuchsia-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                </div>
+                <div>
+                    <h2 class="font-bold text-white">{{ alm.nombre }}</h2>
+                    <p class="text-xs text-slate-500">{{ alm.ubicacion|default:"Sin ubicación definida" }}</p>
+                </div>
+            </div>
+
+            <form method="POST">
+                {% csrf_token %}
+                <input type="hidden" name="almacen_id" value="{{ alm.id }}">
+                <button type="submit" class="px-6 py-2 rounded-xl text-xs font-black transition-all active:scale-95 {% if alm.activo %}bg-slate-800 text-red-400 hover:bg-red-500/10{% else %}bg-fuchsia-600 text-white hover:bg-fuchsia-500{% endif %}">
+                    {% if alm.activo %}DESACTIVAR{% else %}ACTIVAR{% endif %}
+                </button>
+            </form>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-8 p-6 glass-panel border border-fuchsia-500/20 rounded-3xl bg-fuchsia-500/5">
+        <h3 class="text-fuchsia-400 font-bold mb-2">Nota de Infraestructura</h3>
+        <p class="text-xs text-slate-400 leading-relaxed">Solo los Almacenes activos aparecerán en las opciones de carga para vehículos de reparto. La desactivación es lógica y no borra el historial de movimientos.</p>
+    </div>
+</div>
+{% endblock %}

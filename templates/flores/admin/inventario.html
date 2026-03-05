@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block title %}Inventario | {{ almacen.nombre }}{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4">
+    <div class="glass-panel p-6 rounded-3xl mb-8 flex items-center justify-between">
+        <div>
+            <h1 class="text-xl font-bold">{{ almacen.nombre }}</h1>
+            <p class="text-xs text-slate-500">Gestión de stock físico en almacén.</p>
+        </div>
+        <a href="{% url 'flores:admin_dashboard' %}" class="text-slate-400 text-sm">Volver</a>
+    </div>
+
+    <!-- Formulario de Actualización Rápida -->
+    <div class="glass-panel p-6 rounded-3xl mb-8 border border-fuchsia-500/30">
+        <h2 class="text-sm font-bold text-fuchsia-400 mb-4 uppercase tracking-wider">Actualizar / Agregar Stock</h2>
+        <form method="POST" class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            {% csrf_token %}
+            <div class="md:col-span-1">
+                <select name="producto_id" class="w-full bg-slate-800 border-none rounded-xl p-3 text-white text-sm focus:ring-2 focus:ring-fuchsia-600">
+                    {% for p in productos %}
+                        <option value="{{ p.id }}">{{ p.nombre }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="md:col-span-1">
+                <input type="number" name="cantidad" placeholder="Cantidad Total" class="w-full bg-slate-800 border-none rounded-xl p-3 text-white text-sm focus:ring-2 focus:ring-fuchsia-600" required>
+            </div>
+            <button type="submit" class="bg-fuchsia-600 hover:bg-fuchsia-500 text-white font-bold py-3 rounded-xl transition-all">
+                GUARDAR STOCK
+            </button>
+        </form>
+    </div>
+
+    <!-- Lista de Stock Actual -->
+    <div class="glass-panel rounded-3xl overflow-hidden">
+        <table class="w-full text-left border-collapse">
+            <thead>
+                <tr class="bg-slate-800/50 text-slate-500 text-[10px] uppercase font-bold">
+                    <th class="p-4">Producto</th>
+                    <th class="p-4">Categoría</th>
+                    <th class="p-4 text-right">Cantidad en Almacén</th>
+                </tr>
+            </thead>
+            <tbody class="divide-y divide-white/5">
+                {% for s in stocks %}
+                <tr class="hover:bg-white/5 transition">
+                    <td class="p-4 font-bold text-white text-sm">{{ s.producto.nombre }}</td>
+                    <td class="p-4 text-xs text-slate-500">{{ s.producto.categoria.nombre }}</td>
+                    <td class="p-4 text-right font-black text-fuchsia-400 text-lg">{{ s.cantidad }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="3" class="p-12 text-center text-slate-600 italic text-sm">No hay registros de stock para este almacén.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

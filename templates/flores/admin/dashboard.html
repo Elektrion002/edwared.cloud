@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Florería | Dashboard{% endblock %}
+
+{% block content %}
+<div class="max-w-4xl mx-auto px-4">
+    <div class="glass-panel p-6 rounded-3xl mb-8 flex items-center justify-between border-b-4 border-fuchsia-600">
+        <h1 class="text-2xl font-black text-white">Administración Florería</h1>
+        <a href="{% url 'flores:home' %}" class="bg-slate-800 px-4 py-2 rounded-xl text-sm text-slate-400">Volver al App</a>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <a href="{% url 'flores:admin_almacenes' %}" class="glass-panel p-8 rounded-3xl hover:bg-slate-800 transition-all border border-white/5 flex flex-col items-center text-center gap-4">
+            <div class="p-4 bg-fuchsia-600/10 rounded-full">
+                <svg class="w-10 h-10 text-fuchsia-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold text-white">Gestionar Almacenes</h2>
+                <p class="text-slate-500 text-sm mt-1">Activar/Desactivar Tienda 01, Tienda 02 y sus sedes.</p>
+            </div>
+        </a>
+
+        <div class="glass-panel p-8 rounded-3xl border border-white/5 flex flex-col items-center text-center gap-4 opacity-50">
+            <div class="p-4 bg-slate-800 rounded-full text-slate-500">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <div>
+                <h2 class="text-xl font-bold">Catálogo de Productos</h2>
+                <p class="text-slate-600 text-sm mt-1">Próximamente: Editar precios y categorías.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Lista Rápida de Stock -->
+    <div class="glass-panel rounded-3xl overflow-hidden">
+        <div class="p-6 border-b border-white/5">
+            <h3 class="font-bold text-slate-300">Resumen de Almacenes</h3>
+        </div>
+        <div class="p-2">
+            {% for alm in almacenes %}
+            <a href="{% url 'flores:admin_inventario' alm.id %}" class="flex items-center justify-between p-4 hover:bg-white/5 transition rounded-2xl group">
+                <div class="flex items-center gap-4">
+                    <div class="w-2 h-2 rounded-full {% if alm.activo %}bg-green-500 shadow-lg shadow-green-500/50{% else %}bg-red-500{% endif %}"></div>
+                    <div>
+                        <p class="font-bold text-white">{{ alm.nombre }}</p>
+                        <p class="text-xs text-slate-500">{{ alm.ubicacion }}</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="text-xs font-bold text-slate-400 group-hover:text-fuchsia-400 transition">Gestionar Stock &rarr;</span>
+                </div>
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

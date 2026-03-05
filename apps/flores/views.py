@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django.db import transaction
-from .models import NotaVenta, CargaViaje, Producto
+from .models import NotaVenta, CargaViaje, Producto, Almacen, DetalleVenta
 
 def home(request):
     """
@@ -55,11 +55,15 @@ def cargar_inventario(request):
     Registrar la carga inicial del vehículo para el viaje.
     """
     if request.method == 'POST':
+        alm_id = request.POST.get('almacen')
         prod_id = request.POST.get('producto')
         cantidad = int(request.POST.get('cantidad', 0))
         
+        almacen = Almacen.objects.using('flores').get(id=alm_id)
         producto = Producto.objects.using('flores').get(id=prod_id)
+        
         CargaViaje.objects.using('flores').create(
+            almacen_origen=almacen,
             producto=producto,
             cantidad_inicial=cantidad,
             cantidad_actual=cantidad
@@ -67,4 +71,8 @@ def cargar_inventario(request):
         return redirect('flores:home')
 
     productos = Producto.objects.using('flores').filter(activo=True)
-    return render(request, 'flores/cargar_inventario.html', {'productos': productos})
+    almacenes = Almacen.objects.using('flores').filter(activo=True)
+    return render(request, 'flores/cargar_inventario.html', {
+        'productos': productos,
+        'almacenes': almacenes
+    })

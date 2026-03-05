@@ -31,6 +31,11 @@
         <p class="text-slate-400 mt-1 text-sm">Control de venta en ruta y crédito.</p>
       </div>
       <div class="flex gap-2">
+        {% if user.is_staff %}
+        <a href="{% url 'flores:admin_dashboard' %}" class="flex-1 md:flex-none bg-slate-800 border border-fuchsia-500/30 px-4 py-2 rounded-xl text-xs font-bold text-fuchsia-400 hover:bg-fuchsia-600 hover:text-white transition flex items-center justify-center">
+          Administrar
+        </a>
+        {% endif %}
         <a href="/" class="flex-1 md:flex-none glass-panel px-4 py-2 rounded-xl text-xs font-bold text-slate-300 hover:text-white transition flex items-center justify-center">
           Cerrar Sesión
         </a>
